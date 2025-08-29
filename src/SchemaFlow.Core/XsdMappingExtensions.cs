@@ -21,7 +21,11 @@ public static class XsdMappingExtensions
     /// </summary>
     private static string? GetDocumentation(this XmlSchemaAnnotated annotated)
     {
-        if (annotated.Annotation is null) return null;
+        if (annotated.Annotation is null)
+        {
+            return null;
+        }
+
         var parts = new List<string>();
         foreach (var item in annotated.Annotation.Items)
         {
@@ -35,16 +39,32 @@ public static class XsdMappingExtensions
                         switch (node)
                         {
                             case XmlText t:
-                                if (!string.IsNullOrWhiteSpace(t.Value)) parts.Add(t.Value.Trim());
+                                if (!string.IsNullOrWhiteSpace(t.Value))
+                                {
+                                    parts.Add(t.Value.Trim());
+                                }
+
                                 break;
                             case XmlCDataSection cdata:
-                                if (!string.IsNullOrWhiteSpace(cdata.Value)) parts.Add(cdata.Value.Trim());
+                                if (!string.IsNullOrWhiteSpace(cdata.Value))
+                                {
+                                    parts.Add(cdata.Value.Trim());
+                                }
+
                                 break;
                             case XmlElement el:
-                                if (!string.IsNullOrWhiteSpace(el.InnerText)) parts.Add(el.InnerText.Trim());
+                                if (!string.IsNullOrWhiteSpace(el.InnerText))
+                                {
+                                    parts.Add(el.InnerText.Trim());
+                                }
+
                                 break;
                             case XmlNode n:
-                                if (!string.IsNullOrWhiteSpace(n.InnerText)) parts.Add(n.InnerText.Trim());
+                                if (!string.IsNullOrWhiteSpace(n.InnerText))
+                                {
+                                    parts.Add(n.InnerText.Trim());
+                                }
+
                                 break;
                         }
                     }
@@ -76,12 +96,7 @@ public static class XsdMappingExtensions
     public static Occurs ToOccurs(this XmlSchemaParticle p)
     {
         var min = (int)p.MinOccurs;
-        int? max = null;
-        if (p is { MaxOccursString: { } s } && s.Equals("unbounded", StringComparison.OrdinalIgnoreCase))
-            max = null;
-        else
-            max = (int)p.MaxOccurs;
-
+        int? max = p is { MaxOccursString: { } s } && s.Equals("unbounded", StringComparison.OrdinalIgnoreCase) ? null : (int?)(int)p.MaxOccurs;
         return new Occurs { Min = min, Max = max };
     }
 
@@ -130,21 +145,30 @@ public static class XsdMappingExtensions
         {
             var mg = new Compositor { Type = Compositor.Kind.Sequence };
             foreach (XmlSchemaParticle child in seq.Items.OfType<XmlSchemaParticle>())
+            {
                 mg.Particles.Add(child.MapParticle());
+            }
+
             return mg;
         }
         if (particle is XmlSchemaChoice choice)
         {
             var mg = new Compositor { Type = Compositor.Kind.Choice };
             foreach (XmlSchemaParticle child in choice.Items.OfType<XmlSchemaParticle>())
+            {
                 mg.Particles.Add(child.MapParticle());
+            }
+
             return mg;
         }
         if (particle is XmlSchemaAll all)
         {
             var mg = new Compositor { Type = Compositor.Kind.All };
             foreach (XmlSchemaElement el in all.Items.OfType<XmlSchemaElement>())
+            {
                 mg.Particles.Add(el.MapParticle());
+            }
+
             return mg;
         }
         return new Compositor { Type = Compositor.Kind.Sequence };
@@ -325,14 +349,30 @@ public static class XsdMappingExtensions
             {
                 case XmlSchemaComplexContentExtension ext:
                     t.DerivationMethod = "extension";
-                    if (!ext.BaseTypeName.IsEmpty) t.BaseType = ext.BaseTypeName.ToQName();
-                    if (ext.Particle is not null) t.Content = ext.Particle.MapParticle();
+                    if (!ext.BaseTypeName.IsEmpty)
+                    {
+                        t.BaseType = ext.BaseTypeName.ToQName();
+                    }
+
+                    if (ext.Particle is not null)
+                    {
+                        t.Content = ext.Particle.MapParticle();
+                    }
+
                     ext.Attributes.MapAttributes(ext.AnyAttribute, t, modelIfAvailable);
                     break;
                 case XmlSchemaComplexContentRestriction res:
                     t.DerivationMethod = "restriction";
-                    if (!res.BaseTypeName.IsEmpty) t.BaseType = res.BaseTypeName.ToQName();
-                    if (res.Particle is not null) t.Content = res.Particle.MapParticle();
+                    if (!res.BaseTypeName.IsEmpty)
+                    {
+                        t.BaseType = res.BaseTypeName.ToQName();
+                    }
+
+                    if (res.Particle is not null)
+                    {
+                        t.Content = res.Particle.MapParticle();
+                    }
+
                     res.Attributes.MapAttributes(res.AnyAttribute, t, modelIfAvailable);
                     break;
             }
@@ -343,12 +383,20 @@ public static class XsdMappingExtensions
             {
                 case XmlSchemaSimpleContentExtension ext:
                     t.DerivationMethod = "extension";
-                    if (!ext.BaseTypeName.IsEmpty) t.BaseType = ext.BaseTypeName.ToQName();
+                    if (!ext.BaseTypeName.IsEmpty)
+                    {
+                        t.BaseType = ext.BaseTypeName.ToQName();
+                    }
+
                     ext.Attributes.MapAttributes(ext.AnyAttribute, t, modelIfAvailable);
                     break;
                 case XmlSchemaSimpleContentRestriction res:
                     t.DerivationMethod = "restriction";
-                    if (!res.BaseTypeName.IsEmpty) t.BaseType = res.BaseTypeName.ToQName();
+                    if (!res.BaseTypeName.IsEmpty)
+                    {
+                        t.BaseType = res.BaseTypeName.ToQName();
+                    }
+
                     res.Attributes.MapAttributes(res.AnyAttribute, t, modelIfAvailable);
                     break;
             }
@@ -386,7 +434,9 @@ public static class XsdMappingExtensions
             }
         }
         if (anyAttr is not null)
+        {
             t.AnyAttribute = anyAttr.MapWildcard();
+        }
     }
 
     /// <summary>

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using SchemaFlow.Model; // QualifiedName, ToKey
 using SchemaFlow.Model.ContentModels;
 using SchemaFlow.Model.GlobalDefinitions;
@@ -87,31 +85,23 @@ public static class SchemaTreeBuilder
     private static TreeNode BuildTypeRefNode(QualifiedName typeName, SchemaSet model, HashSet<string> visitedTypeKeys, HashSet<object> visitedAnon)
     {
         var key = typeName.ToKey();
-        if (model.GlobalComplexTypes.TryGetValue(key, out var ct))
-        {
-            return BuildComplexTypeNode(ct, model, visitedTypeKeys, visitedAnon);
-        }
-        if (model.GlobalSimpleTypes.TryGetValue(key, out var st))
-        {
-            return BuildSimpleTypeNode(st, model, visitedTypeKeys, visitedAnon);
-        }
-
-        return new TreeNode($"{typeName} (unresolved)", typeName);
+        return model.GlobalComplexTypes.TryGetValue(key, out var ct)
+            ? BuildComplexTypeNode(ct, model, visitedTypeKeys, visitedAnon)
+            : model.GlobalSimpleTypes.TryGetValue(key, out var st)
+            ? BuildSimpleTypeNode(st, model, visitedTypeKeys, visitedAnon)
+            : new TreeNode($"{typeName} (unresolved)", typeName);
     }
 
     private static TreeNode BuildTypeDefinitionNode(TypeDefinition def, SchemaSet model, HashSet<string> visitedTypeKeys, HashSet<object> visitedAnon)
     {
-        if (!visitedAnon.Add(def))
-        {
-            return new TreeNode("(anonymous type - visited)", def);
-        }
-
-        return def switch
-        {
-            ComplexType ct => BuildComplexTypeNode(ct, model, visitedTypeKeys, visitedAnon),
-            SimpleType st => BuildSimpleTypeNode(st, model, visitedTypeKeys, visitedAnon),
-            _ => new TreeNode("(unknown type)", def)
-        };
+        return !visitedAnon.Add(def)
+            ? new TreeNode("(anonymous type - visited)", def)
+            : def switch
+            {
+                ComplexType ct => BuildComplexTypeNode(ct, model, visitedTypeKeys, visitedAnon),
+                SimpleType st => BuildSimpleTypeNode(st, model, visitedTypeKeys, visitedAnon),
+                _ => new TreeNode("(unknown type)", def)
+            };
     }
 
     private static TreeNode BuildComplexTypeNode(ComplexType ct, SchemaSet model, HashSet<string> visitedTypeKeys, HashSet<object> visitedAnon)

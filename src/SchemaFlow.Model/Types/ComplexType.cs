@@ -1,5 +1,4 @@
-﻿using SchemaFlow.Model.Attributes;
-using SchemaFlow.Model.ContentModels;
+﻿using SchemaFlow.Model.ContentModels;
 
 namespace SchemaFlow.Model.Types;
 

@@ -1,10 +1,8 @@
 ﻿using System.Xml;
 using System.Xml.Schema;
 using SchemaFlow.Model;
-using SchemaFlow.Model.Attributes;
-using SchemaFlow.Model.ContentModels;
-using SchemaFlow.Model.SchemaContainers;
 using SchemaFlow.Model.GlobalDefinitions;
+using SchemaFlow.Model.SchemaContainers;
 
 namespace SchemaFlow.Core;
 
@@ -152,7 +150,10 @@ public sealed class XsdSimpleDomainLoader
                             mapped.Name = st.QualifiedName.IsEmpty ? null : st.QualifiedName.ToQName();
                             doc.SimpleTypes.Add(mapped);
                             if (mapped.IsGlobal)
+                            {
                                 model.GlobalSimpleTypes[mapped.Name!.ToKey()] = mapped;
+                            }
+
                             break;
                         }
                     case XmlSchemaComplexType ct:
@@ -161,7 +162,10 @@ public sealed class XsdSimpleDomainLoader
                             mapped.Name = ct.QualifiedName.IsEmpty ? null : ct.QualifiedName.ToQName();
                             doc.ComplexTypes.Add(mapped);
                             if (mapped.IsGlobal)
+                            {
                                 model.GlobalComplexTypes[mapped.Name!.ToKey()] = mapped;
+                            }
+
                             break;
                         }
                     case XmlSchemaAttribute ga when !ga.QualifiedName.IsEmpty:
@@ -180,7 +184,9 @@ public sealed class XsdSimpleDomainLoader
             {
                 var key = ag.QualifiedName.ToQName().ToKey();
                 if (!model.GlobalAttributeGroups.TryGetValue(key, out var decl))
+                {
                     continue;
+                }
 
                 decl.Attributes.Clear();
 
@@ -198,13 +204,18 @@ public sealed class XsdSimpleDomainLoader
                 }
 
                 if (ag.AnyAttribute is not null)
+                {
                     decl.AnyAttribute = ag.AnyAttribute.MapWildcard();
+                }
             }
 
             // Globale Elemente
             foreach (var el in xs.Items.OfType<XmlSchemaElement>())
             {
-                if (el.QualifiedName.IsEmpty) continue;
+                if (el.QualifiedName.IsEmpty)
+                {
+                    continue;
+                }
 
                 var decl = el.MapGlobalElement(model);
                 doc.Elements.Add(decl);
@@ -222,7 +233,11 @@ public sealed class XsdSimpleDomainLoader
         {
             foreach (var ag in xs.Items.OfType<XmlSchemaAttributeGroup>())
             {
-                if (ag.QualifiedName.IsEmpty) continue;
+                if (ag.QualifiedName.IsEmpty)
+                {
+                    continue;
+                }
+
                 var key = ag.QualifiedName.ToQName().ToKey();
                 map[key] = ag; // last one wins, consistent with XSD redefinition/override rules
             }
@@ -246,7 +261,10 @@ public sealed class XsdSimpleDomainLoader
         Dictionary<string, XmlSchemaAttributeGroup> sourceMap)
     {
         var key = groupName.ToKey();
-        if (!visited.Add(key)) return; // Zyklen verhindern
+        if (!visited.Add(key))
+        {
+            return; // Zyklen verhindern
+        }
 
         if (sourceMap.TryGetValue(key, out var ag))
         {
@@ -270,14 +288,14 @@ public sealed class XsdSimpleDomainLoader
         if (model.GlobalAttributeGroups.TryGetValue(key, out var groupDecl))
         {
             foreach (var au in groupDecl.Attributes)
+            {
                 target.Add(au);
+            }
         }
     }
 
     private static Uri? TryMakeUri(string input)
     {
-        if (Uri.TryCreate(input, UriKind.Absolute, out var abs)) return abs;
-        if (File.Exists(input)) return new Uri(Path.GetFullPath(input));
-        return null;
+        return Uri.TryCreate(input, UriKind.Absolute, out var abs) ? abs : File.Exists(input) ? new Uri(Path.GetFullPath(input)) : null;
     }
 }

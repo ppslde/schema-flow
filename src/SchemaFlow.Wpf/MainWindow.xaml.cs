@@ -1,19 +1,17 @@
-using Microsoft.Win32;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using SchemaFlow.Wpf.ViewModels;
+using Microsoft.Win32;
 using SchemaFlow.ViewModel.Plugins;
+using SchemaFlow.Wpf.ViewModels;
 
 namespace SchemaFlow.Wpf;
 
 public partial class MainWindow : Window
 {
     private readonly List<IDetailTemplateProvider> _providers = new();
-    private AppSettings _settings = new();
+    private readonly AppSettings _settings = new();
 
     public MainWindow()
     {
@@ -43,10 +41,14 @@ public partial class MainWindow : Window
         {
             var idx = _providers.FindIndex(p => string.Equals(p.Name, _settings.SelectedTemplateProvider, System.StringComparison.OrdinalIgnoreCase));
             if (idx >= 0)
+            {
                 TemplateCombo.SelectedIndex = idx;
+            }
         }
         if (TemplateCombo.SelectedIndex < 0 && TemplateCombo.Items.Count > 0)
+        {
             TemplateCombo.SelectedIndex = 0;
+        }
     }
 
     private void TryLoadProvidersFromAssemblyPath(string assemblyPath)
@@ -66,7 +68,9 @@ public partial class MainWindow : Window
             if (typeof(IDetailTemplateProvider).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
             {
                 if (Activator.CreateInstance(t) is IDetailTemplateProvider p)
+                {
                     _providers.Add(p);
+                }
             }
         }
     }
@@ -83,13 +87,18 @@ public partial class MainWindow : Window
     {
         var provider = TemplateCombo.SelectedItem as IDetailTemplateProvider
                        ?? _providers.FirstOrDefault();
-        if (provider == null) return;
+        if (provider == null)
+        {
+            return;
+        }
 
         for (int i = Resources.MergedDictionaries.Count - 1; i >= 0; i--)
         {
             var src = Resources.MergedDictionaries[i].Source?.ToString() ?? string.Empty;
             if (src.Contains("Resources/DetailTemplates.xaml", System.StringComparison.OrdinalIgnoreCase))
+            {
                 Resources.MergedDictionaries.RemoveAt(i);
+            }
         }
 
         var dict = provider.Load();

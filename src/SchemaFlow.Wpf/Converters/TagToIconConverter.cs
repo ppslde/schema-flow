@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Windows.Data;
-using SchemaFlow.Model.Attributes;
 using SchemaFlow.Model.ContentModels;
 using SchemaFlow.Model.GlobalDefinitions;
 using SchemaFlow.Model.SchemaContainers;

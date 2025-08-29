@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text.Json;
 
@@ -22,7 +21,10 @@ internal static class SettingsService
             {
                 var json = File.ReadAllText(SettingsPath);
                 var s = JsonSerializer.Deserialize<AppSettings>(json);
-                if (s != null) return s;
+                if (s != null)
+                {
+                    return s;
+                }
             }
         }
         catch { }
