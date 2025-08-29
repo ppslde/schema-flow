@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace SchemaFlow.Wpf.ViewModels;
+namespace SchemaFlow.ViewModel;
 
 public class TreeNode
 {

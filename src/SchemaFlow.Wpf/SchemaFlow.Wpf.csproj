@@ -10,10 +10,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SchemaFlow.Core\SchemaFlow.Core.csproj" />
+    <ProjectReference Include="..\SchemaFlow.ViewModel\SchemaFlow.ViewModel.csproj" />
+    <ProjectReference Include="..\SchemaFlow.Templates.Default\SchemaFlow.Templates.Default.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
   </ItemGroup>
+
+  <Target Name="CopyPlugins" AfterTargets="Build">
+    <ItemGroup>
+      <PluginAssemblies Include="$(SolutionDir)src\SchemaFlow.Templates.Default\bin\$(Configuration)\$(TargetFramework)\SchemaFlow.Templates.Default.dll" />
+      <PluginAssemblies Include="$(SolutionDir)src\SchemaFlow.ViewModel\bin\$(Configuration)\net9.0-windows\SchemaFlow.ViewModel.dll" />
+      <PluginAssemblies Include="$(SolutionDir)src\SchemaFlow.Model\bin\$(Configuration)\net9.0\SchemaFlow.Model.dll" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutDir)Plugins" />
+    <Copy SourceFiles="@(PluginAssemblies)" DestinationFolder="$(OutDir)Plugins" SkipUnchangedFiles="true" Condition="Exists('%(PluginAssemblies.Identity)')" />
+  </Target>
 
 </Project>

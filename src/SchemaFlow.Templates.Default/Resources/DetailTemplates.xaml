@@ -1,26 +1,13 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:model="clr-namespace:SchemaFlow.Model;assembly=SchemaFlow.Model"
-                    xmlns:modelAttr="clr-namespace:SchemaFlow.Model.Attributes;assembly=SchemaFlow.Model"
                     xmlns:modelTypes="clr-namespace:SchemaFlow.Model.Types;assembly=SchemaFlow.Model"
                     xmlns:modelContent="clr-namespace:SchemaFlow.Model.ContentModels;assembly=SchemaFlow.Model"
                     xmlns:modelDocs="clr-namespace:SchemaFlow.Model.SchemaContainers;assembly=SchemaFlow.Model"
                     xmlns:modelDefs="clr-namespace:SchemaFlow.Model.GlobalDefinitions;assembly=SchemaFlow.Model"
-                    xmlns:conv="clr-namespace:SchemaFlow.Wpf.Converters">
-    <!-- Converters used in detail templates -->
+                    xmlns:conv="clr-namespace:SchemaFlow.Templates.Default.Converters">
     <conv:OccursToTextConverter x:Key="OccursToText"/>
 
-    <!-- Detail rendering: fallback -->
-    <DataTemplate x:Key="DefaultDetailTemplate">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="8">
-                <TextBlock Text="No template for this type."/>
-                <TextBlock Text="{Binding}" Margin="0,4,0,0"/>
-            </StackPanel>
-        </ScrollViewer>
-    </DataTemplate>
-
-    <!-- Detail: SchemaDocument -->
     <DataTemplate DataType="{x:Type modelDocs:SchemaDocument}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="8" Orientation="Vertical" >
@@ -53,7 +40,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Namespace}"/>
-                                    <TextBlock Text="=>" Margin="8,0,0,0"/>
+                                    <TextBlock Text=">" Margin="8,0,0,0"/>
                                     <TextBlock Text="{Binding Location}" Margin="8,0,0,0"/>
                                 </StackPanel>
                             </DataTemplate>
@@ -64,7 +51,6 @@
         </ScrollViewer>
     </DataTemplate>
 
-    <!-- Detail: ElementDecl -->
     <DataTemplate DataType="{x:Type modelDefs:ElementDecl}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="8" Orientation="Vertical">
@@ -82,7 +68,6 @@
         </ScrollViewer>
     </DataTemplate>
 
-    <!-- Detail: ComplexType -->
     <DataTemplate DataType="{x:Type modelTypes:ComplexType}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="8" Orientation="Vertical" >
@@ -134,18 +119,16 @@
         </ScrollViewer>
     </DataTemplate>
 
-    <!-- Detail: SimpleType -->
     <DataTemplate DataType="{x:Type modelTypes:SimpleType}">
         <StackPanel Margin="8" Orientation="Vertical">
             <TextBlock Text="SimpleType" FontWeight="Bold" FontSize="14"/>
             <TextBlock Text="Kind:" FontWeight="SemiBold" Margin="0,8,0,0"/>
-            <TextBlock Text="{Binding Kind}"/>
+            <TextBlock Text="{Binding Type}"/>
             <TextBlock Text="BaseType:" FontWeight="SemiBold" Margin="0,8,0,0"/>
             <TextBlock Text="{Binding BaseType}"/>
         </StackPanel>
     </DataTemplate>
 
-    <!-- Detail: ModelGroup/Particle/Terms -->
     <DataTemplate DataType="{x:Type modelContent:Particle}">
         <StackPanel>
             <TextBlock Text="{Binding Occurs, Converter={StaticResource OccursToText}}" FontStyle="Italic"/>
@@ -154,7 +137,7 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type modelContent:Compositor}">
         <StackPanel>
-            <TextBlock Text="{Binding Compositor}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Type}" FontWeight="SemiBold"/>
             <ItemsControl ItemsSource="{Binding Particles}" Margin="0,4,0,0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -175,7 +158,7 @@
                 <TextBlock Text="Type:"/>
                 <TextBlock Text="{Binding TypeName}" Margin="8,0,0,0"/>
             </StackPanel>
-            <ContentPresenter Content="{Binding AnonymousType}" Margin="0,4,0,0"/>
+            <ContentPresenter Content="{Binding InlineType}" Margin="0,4,0,0"/>
         </StackPanel>
     </DataTemplate>
     <DataTemplate DataType="{x:Type modelContent:Wildcard}">
@@ -183,7 +166,7 @@
             <TextBlock Text="Wildcard:" FontWeight="SemiBold"/>
             <TextBlock Text="{Binding NamespaceConstraint}" Margin="8,0,0,0"/>
             <TextBlock Text="(" Margin="8,0,0,0"/>
-            <TextBlock Text="{Binding ProcessContents}"/>
+            <TextBlock Text="{Binding ContentProcesing}"/>
             <TextBlock Text=")"/>
         </StackPanel>
     </DataTemplate>

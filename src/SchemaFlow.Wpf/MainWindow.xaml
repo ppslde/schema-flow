@@ -20,7 +20,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/SchemaFlow.Wpf;component/Resources/TreeTemplates.xaml" />
-                <ResourceDictionary Source="/SchemaFlow.Wpf;component/Resources/DetailTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -30,6 +29,10 @@
             <Button Content="Open XSDs" Width="120" Click="Open_Click"/>
             <TextBlock Text="Diagnostics:" VerticalAlignment="Center" Margin="8,0,0,0"/>
             <ItemsControl ItemsSource="{Binding Diagnostics}"/>
+            <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
+                <TextBlock Text="Detail-Ansicht:" VerticalAlignment="Center" Margin="8,0,4,0"/>
+                <ComboBox x:Name="TemplateCombo" Width="200" DisplayMemberPath="Name" SelectedIndex="0" />
+            </StackPanel>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -45,7 +48,6 @@
                 <ContentControl Content="{Binding SelectedObject}" />
             </Border>
 
-            <!-- Third panel: PropertyGrid for full inspection of the selected object -->
             <Border Grid.Column="2" BorderBrush="Gainsboro" BorderThickness="1" Margin="8">
                 <xctk:PropertyGrid SelectedObject="{Binding SelectedObject}"
                                     AutoGenerateProperties="True"

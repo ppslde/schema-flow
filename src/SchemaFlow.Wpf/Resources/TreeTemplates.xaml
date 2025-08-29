@@ -1,12 +1,12 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:vm="clr-namespace:SchemaFlow.Wpf.ViewModels"
+                    xmlns:vmShared="clr-namespace:SchemaFlow.ViewModel;assembly=SchemaFlow.ViewModel"
                     xmlns:conv="clr-namespace:SchemaFlow.Wpf.Converters">
     <!-- Converters local to tree templates -->
     <conv:TagToIconConverter x:Key="TagToIcon"/>
 
     <!-- Tree rendering -->
-    <HierarchicalDataTemplate DataType="{x:Type vm:TreeNode}" ItemsSource="{Binding Children}">
+    <HierarchicalDataTemplate DataType="{x:Type vmShared:TreeNode}" ItemsSource="{Binding Children}">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Tag, Converter={StaticResource TagToIcon}}" Margin="0,0,6,0"/>
             <TextBlock Text="{Binding Title}" />

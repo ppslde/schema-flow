@@ -1,20 +1,18 @@
+using System.Collections.Generic;
+using System.Linq;
 using SchemaFlow.Model; // QualifiedName, ToKey
 using SchemaFlow.Model.ContentModels;
 using SchemaFlow.Model.GlobalDefinitions;
 using SchemaFlow.Model.SchemaContainers;
 using SchemaFlow.Model.Types;
+using SchemaFlow.ViewModel;
 
 namespace SchemaFlow.Wpf.ViewModels;
 
-/// <summary>
-/// Builds the hierarchical TreeNode structure from a SchemaSet.
-/// Extracted from MainViewModel to keep VM lean and reusable.
-/// </summary>
 public static class SchemaTreeBuilder
 {
     public static IEnumerable<TreeNode> Build(SchemaSet model)
     {
-        // Documents: nested structure starting from top-level elements, expanding into their types/particles
         var docsRoot = new TreeNode("Documents");
         foreach (var d in model.Documents)
         {
@@ -30,7 +28,6 @@ public static class SchemaTreeBuilder
             }
             docNode.Children.Add(elementsRoot);
 
-            // Optional: also expose top-level complex/simple types
             var complexTypesRoot = new TreeNode("ComplexTypes");
             foreach (var t in d.ComplexTypes.OrderBy(t => t.Name?.ToString()))
             {
@@ -50,7 +47,6 @@ public static class SchemaTreeBuilder
             docsRoot.Children.Add(docNode);
         }
 
-        // Globals: keep a flat view for quick lookups
         var globalsRoot = new TreeNode("Globals");
         globalsRoot.Children.Add(MakeGroup("Elements", model.GlobalElements.Values.OrderBy(e => e.Name.ToString()).Select(e => (e.Name.ToString(), (object)e))));
         globalsRoot.Children.Add(MakeGroup("ComplexTypes", model.GlobalComplexTypes.Values.OrderBy(t => t.Name!.ToString()).Select(t => (t.Name!.ToString(), (object)t))));
@@ -91,9 +87,6 @@ public static class SchemaTreeBuilder
     private static TreeNode BuildTypeRefNode(QualifiedName typeName, SchemaSet model, HashSet<string> visitedTypeKeys, HashSet<object> visitedAnon)
     {
         var key = typeName.ToKey();
-        //if (!visitedTypeKeys.Add(key))
-        //    return new TreeNode($"{typeName} (visited)", typeName);
-
         if (model.GlobalComplexTypes.TryGetValue(key, out var ct))
         {
             return BuildComplexTypeNode(ct, model, visitedTypeKeys, visitedAnon);
@@ -126,7 +119,6 @@ public static class SchemaTreeBuilder
         var title = ct.IsGlobal ? ct.Name!.ToString() : "(anonymous complexType)";
         var node = new TreeNode(title, ct);
 
-        // Base type
         if (ct.BaseType is not null)
         {
             var baseNode = BuildTypeRefNode(ct.BaseType, model, visitedTypeKeys, visitedAnon);
@@ -134,13 +126,11 @@ public static class SchemaTreeBuilder
             node.Children.Add(baseNode);
         }
 
-        // Content model
         if (ct.Content is not null)
         {
             node.Children.Add(BuildParticleNode(ct.Content, model, visitedTypeKeys, visitedAnon));
         }
 
-        // Attributes
         if (ct.Attributes.Count > 0 || ct.AnyAttribute != null)
         {
             var attrs = new TreeNode("Attributes");
@@ -211,15 +201,15 @@ public static class SchemaTreeBuilder
         var term = p.Term;
         return term switch
         {
-            Compositor mg => BuildModelGroupNode(mg, occursText, model, visitedTypeKeys, visitedAnon),
-            Element et => BuildElementTermNode(et, occursText, model, visitedTypeKeys, visitedAnon),
+            Compositor mg => BuildCompositorNode(mg, occursText, model, visitedTypeKeys, visitedAnon),
+            Element el => BuildElementTermNode(el, occursText, model, visitedTypeKeys, visitedAnon),
             GroupRef gr => BuildGroupRefNode(gr, occursText, model, visitedTypeKeys, visitedAnon),
             Wildcard wc => new TreeNode($"{occursText} any {wc.NamespaceConstraint} ({wc.ContentProcesing})", wc),
             _ => new TreeNode($"{occursText} (unknown term)", term)
         };
     }
 
-    private static TreeNode BuildModelGroupNode(Compositor mg, string occurs, SchemaSet model, HashSet<string> visitedTypeKeys, HashSet<object> visitedAnon)
+    private static TreeNode BuildCompositorNode(Compositor mg, string occurs, SchemaSet model, HashSet<string> visitedTypeKeys, HashSet<object> visitedAnon)
     {
         var node = new TreeNode($"{mg.Type} {occurs}", mg);
         foreach (var child in mg.Particles)
@@ -237,7 +227,7 @@ public static class SchemaTreeBuilder
 
         if (model.GlobalGroups.TryGetValue(key, out var decl))
         {
-            node.Children.Add(BuildModelGroupNode(decl.Compositor, "", model, visitedTypeKeys, visitedAnon));
+            node.Children.Add(BuildCompositorNode(decl.Compositor, "", model, visitedTypeKeys, visitedAnon));
         }
         else
         {
