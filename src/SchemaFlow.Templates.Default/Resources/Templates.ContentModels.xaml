@@ -1,0 +1,54 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:modelContent="clr-namespace:SchemaFlow.Model.ContentModels;assembly=SchemaFlow.Model"
+                    xmlns:conv="clr-namespace:SchemaFlow.Templates.Default.Converters">
+    <conv:OccursToTextConverter x:Key="OccursToText"/>
+  
+    <DataTemplate DataType="{x:Type modelContent:Particle}">
+        <StackPanel>
+            <TextBlock Text="{Binding Occurs, Converter={StaticResource OccursToText}}" FontStyle="Italic"/>
+            <ContentPresenter Content="{Binding Term}" Margin="0,4,0,0"/>
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type modelContent:Compositor}">
+        <StackPanel>
+            <TextBlock Text="{Binding Type}" FontWeight="SemiBold"/>
+            <ItemsControl ItemsSource="{Binding Particles}" Margin="0,4,0,0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type modelContent:Element}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Element:" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding Ref}" Margin="8,0,0,0"/>
+                <TextBlock Text="{Binding Name}" Margin="8,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <TextBlock Text="Type:"/>
+                <TextBlock Text="{Binding TypeName}" Margin="8,0,0,0"/>
+            </StackPanel>
+            <ContentPresenter Content="{Binding InlineType}" Margin="0,4,0,0"/>
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type modelContent:Wildcard}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Wildcard:" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding NamespaceConstraint}" Margin="8,0,0,0"/>
+            <TextBlock Text="(" Margin="8,0,0,0"/>
+            <TextBlock Text="{Binding ContentProcesing}"/>
+            <TextBlock Text=")"/>
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type modelContent:GroupRef}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="GroupRef:" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding GroupName}" Margin="8,0,0,0"/>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

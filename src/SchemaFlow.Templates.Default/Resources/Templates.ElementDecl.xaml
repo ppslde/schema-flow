@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:modelDefs="clr-namespace:SchemaFlow.Model.GlobalDefinitions;assembly=SchemaFlow.Model">
+    <DataTemplate DataType="{x:Type modelDefs:ElementDecl}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="8" Orientation="Vertical">
+                <TextBlock Text="Element" FontWeight="Bold" FontSize="14"/>
+                <TextBlock Text="Name:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Name}" />
+                <TextBlock Text="Nillable:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Nillable}" />
+                <TextBlock Text="Abstract:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Abstract}" />
+                <TextBlock Text="Type:" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                <ContentControl Content="{Binding TypeName}"/>
+                <ContentPresenter Content="{Binding AnonymousType}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+</ResourceDictionary>
