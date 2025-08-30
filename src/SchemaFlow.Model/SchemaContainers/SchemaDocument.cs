@@ -14,6 +14,11 @@ public class SchemaDocument
     /// <summary>Schema version (xsd:schema/@version).</summary>
     public string? Version { get; set; }
 
+    /// <summary>
+    /// Optional URI or file path of the loaded schema document. Useful for resolving SourceLocation.
+    /// </summary>
+    public string? DocumentUri { get; set; }
+
     // Includes/Imports als „rohe“ Info – Auflösung macht dein Loader
     /// <summary>List of xs:include locations (as given).</summary>
     public List<string> Includes { get; } = new();

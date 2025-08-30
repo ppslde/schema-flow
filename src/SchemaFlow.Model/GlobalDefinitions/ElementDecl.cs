@@ -35,4 +35,9 @@ public record class ElementDecl
     // Optional: Substitution Group
     /// <summary>Optional substitution group head.</summary>
     public QualifiedName? SubstitutionGroupHead { get; set; }
+
+    /// <summary>
+    /// Optional source location in the original XSD for quick navigation.
+    /// </summary>
+    public SourceLocation? Source { get; set; }
 }

@@ -20,6 +20,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/SchemaFlow.Wpf;component/Resources/TreeTemplates.xaml" />
+                <!-- Fallback für Details: zeigt Raw XSD, wenn kein DataTemplate gefunden wird -->
+                <ResourceDictionary Source="/SchemaFlow.Wpf;component/Resources/DetailFallbacks.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -45,7 +47,8 @@
                       SelectedItemChanged="Tree_SelectedItemChanged"/>
 
             <Border Grid.Column="1" BorderBrush="Gainsboro" BorderThickness="1" Margin="8">
-                <ContentControl Content="{Binding SelectedObject}" />
+                <ContentControl Content="{Binding SelectedObject}"
+                                ContentTemplateSelector="{StaticResource DetailTemplateSelector}" />
             </Border>
 
             <Border Grid.Column="2" BorderBrush="Gainsboro" BorderThickness="1" Margin="8">

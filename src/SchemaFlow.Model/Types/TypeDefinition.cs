@@ -19,4 +19,9 @@ public abstract record class TypeDefinition
     /// Optional human-readable documentation (annotation/appinfo).
     /// </summary>
     public string? Documentation { get; set; }
+
+    /// <summary>
+    /// Optional source location in the original XSD for quick navigation.
+    /// </summary>
+    public SourceLocation? Source { get; set; }
 }

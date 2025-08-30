@@ -16,6 +16,14 @@ namespace SchemaFlow.Core;
 public static class XsdMappingExtensions
 {
     /// <summary>
+    /// Creates a SourceLocation from an XmlSchemaObject if line info is available.
+    /// </summary>
+    private static SourceLocation? ToSourceLocation(this XmlSchemaObject o)
+        => o.LineNumber > 0 && o.LinePosition > 0
+            ? new SourceLocation { DocumentUri = o.SourceUri, Line = o.LineNumber, Column = o.LinePosition }
+            : null;
+
+    /// <summary>
     /// Extracts human-readable documentation text from an annotated schema object (xsd:annotation/xsd:documentation).
     /// Multiple documentation blocks are joined with double newlines.
     /// </summary>
@@ -253,7 +261,8 @@ public static class XsdMappingExtensions
             Nillable = el.IsNillable,
             DefaultValue = el.DefaultValue,
             FixedValue = el.FixedValue,
-            Documentation = el.GetDocumentation()
+            Documentation = el.GetDocumentation(),
+            Source = el.ToSourceLocation()
         };
         if (!el.SchemaTypeName.IsEmpty)
         {
@@ -341,7 +350,8 @@ public static class XsdMappingExtensions
         {
             Abstract = ct.IsAbstract,
             Mixed = ct.IsMixed,
-            Documentation = ct.GetDocumentation()
+            Documentation = ct.GetDocumentation(),
+            Source = ct.ToSourceLocation()
         };
         if (ct.ContentModel is XmlSchemaComplexContent cc)
         {
@@ -452,7 +462,8 @@ public static class XsdMappingExtensions
             {
                 Type = SimpleType.Kind.Restriction,
                 BaseType = r.BaseTypeName.IsEmpty ? null : r.BaseTypeName.ToQName(),
-                Documentation = st.GetDocumentation()
+                Documentation = st.GetDocumentation(),
+                Source = st.ToSourceLocation()
             };
             foreach (XmlSchemaFacet f in r.Facets)
             {
@@ -468,7 +479,8 @@ public static class XsdMappingExtensions
             {
                 Type = SimpleType.Kind.List,
                 ListItemType = l.ItemTypeName.IsEmpty ? null : l.ItemTypeName.ToQName(),
-                Documentation = st.GetDocumentation()
+                Documentation = st.GetDocumentation(),
+                Source = st.ToSourceLocation()
             };
             if (l.ItemType is XmlSchemaSimpleType anon)
             {
@@ -483,7 +495,8 @@ public static class XsdMappingExtensions
             var t = new SimpleType
             {
                 Type = SimpleType.Kind.Union,
-                Documentation = st.GetDocumentation()
+                Documentation = st.GetDocumentation(),
+                Source = st.ToSourceLocation()
             };
             foreach (var qn in u.MemberTypes.Where(q => !q.IsEmpty))
             {
@@ -498,7 +511,8 @@ public static class XsdMappingExtensions
         return new SimpleType
         {
             Type = SimpleType.Kind.BuiltIn,
-            Documentation = st.GetDocumentation()
+            Documentation = st.GetDocumentation(),
+            Source = st.ToSourceLocation()
         };
     }
 

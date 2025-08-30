@@ -52,7 +52,7 @@
         </ScrollViewer>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type modelTypes:SimpleType}">
+    <!--<DataTemplate DataType="{x:Type modelTypes:SimpleType}">
         <StackPanel Margin="8" Orientation="Vertical">
             <TextBlock Text="SimpleType" FontWeight="Bold" FontSize="14"/>
             <TextBlock Text="Kind:" FontWeight="SemiBold" Margin="0,8,0,0"/>
@@ -60,5 +60,5 @@
             <TextBlock Text="BaseType:" FontWeight="SemiBold" Margin="0,8,0,0"/>
             <TextBlock Text="{Binding BaseType}"/>
         </StackPanel>
-    </DataTemplate>
+    </DataTemplate>-->
 </ResourceDictionary>

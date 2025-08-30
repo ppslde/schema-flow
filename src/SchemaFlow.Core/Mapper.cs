@@ -65,7 +65,8 @@ public sealed class XsdSimpleDomainLoader
             {
                 TargetNamespace = xs.TargetNamespace,
                 Version = xs.Version,
-                Namespaces = xs.Namespaces?.ToArray().ToDictionary(ns => ns.Name, ns => ns.Namespace) ?? []
+                Namespaces = xs.Namespaces?.ToArray().ToDictionary(ns => ns.Name, ns => ns.Namespace) ?? [],
+                DocumentUri = xs.SourceUri
             };
 
             // Includes/Imports sammeln
